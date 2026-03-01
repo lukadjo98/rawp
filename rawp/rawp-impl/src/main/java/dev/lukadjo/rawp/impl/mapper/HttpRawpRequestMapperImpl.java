@@ -87,7 +87,6 @@ public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
     }
 
     private static List<String> retrieveApiHeader(HttpRequest httpRequest) {
-        List<String> apiHeaders = httpRequest.getHeaders().get("api");
-        return apiHeaders;
+        return httpRequest.getHeaders().get("api");
     }
 }
