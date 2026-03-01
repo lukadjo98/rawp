@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
-@RequestMapping("${rawp.rest.base-path}")
+@RequestMapping("/")
 public class RawpController {
 
     private final HttpRawpRequestMapper httpRawpRequestMapper;

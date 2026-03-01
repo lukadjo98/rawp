@@ -1,0 +1,9 @@
+{
+  "path": "/",
+  "headers": {
+    "api": [ "myApi" ],
+    "headerKey": [ "headerValue" ]
+  },
+  "httpMethod": "POST",
+  "body": "{\"id\": 123 }"
+}
