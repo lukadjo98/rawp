@@ -46,18 +46,7 @@ public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
 
         rawpRequest.setMethodType(retrieveMethodType(httpRequest));
 
-
-        Map<String, Object> rawpArgs = retrieveArgs(httpRequest);
-        if (rawpArgs == null) {
-            return HttpRawpRequestMappingResult.builder()
-                    .rawpRequest(null)
-                    .status(HttpRawpRequestMappingResultStatus.INVALID_BODY)
-                    .statusMessage("Http request body not valid")
-                    .build();
-        } else {
-            rawpRequest.setArgs(rawpArgs);
-        }
-
+        rawpRequest.setArgs(retrieveArgs(httpRequest));
 
         return HttpRawpRequestMappingResult.builder()
                 .rawpRequest(rawpRequest)
