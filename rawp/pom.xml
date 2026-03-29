@@ -12,6 +12,7 @@
         <module>rawp-api</module>
         <module>rawp-rest</module>
         <module>rawp-impl</module>
+        <module>rawp-all</module>
     </modules>
     <dependencyManagement>
 
