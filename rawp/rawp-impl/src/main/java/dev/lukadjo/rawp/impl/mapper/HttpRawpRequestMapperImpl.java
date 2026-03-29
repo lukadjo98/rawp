@@ -61,7 +61,7 @@ public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
             return objectMapper.readValue(httpRequest.getBody(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            return null;
+            throw new IllegalArgumentException("Error while parsing body", e);
         }
 
     }
