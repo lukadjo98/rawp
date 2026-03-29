@@ -59,5 +59,5 @@ curl http://<app_host>:<app_port>/path/random -H "api:demo"
 - OpenAPI spec out of the box
 - Customizable http exposure conventions
 
-### Changelog
+## Changelog
 
