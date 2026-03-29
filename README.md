@@ -54,10 +54,10 @@ public interface MyService {
 curl http://<app_host>:<app_port>/path/random -H "api:demo"
 ~~~
 
-## Roadmap
+## roadmap
 - OAuth 2.0 out of the box
 - OpenAPI spec out of the box
 - Customizable http exposure conventions
 
-## Changelog
+## changelog
 
