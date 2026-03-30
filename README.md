@@ -14,6 +14,14 @@ Developer declares service as a plain Java interface, and the library automatica
         <artifactId>rawp-all</artifactId>
         <version>0.0.1</version>
 	</dependency>
+
+...
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
+        </repository>
+    </repositories>
 ~~~
 
 ## usage
