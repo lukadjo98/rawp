@@ -7,7 +7,6 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <project.version>0.0.1-SNAPSHOT</project.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,17 +16,17 @@
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-api</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-impl</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-rest</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
