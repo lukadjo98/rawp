@@ -4,7 +4,7 @@
     <parent>
         <groupId>dev.lukadjo</groupId>
         <artifactId>rawp</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>rawp-impl</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
 
         <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-context -->
