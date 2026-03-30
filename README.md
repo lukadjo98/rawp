@@ -63,7 +63,7 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 
 ## roadmap
 - OAuth 2.0 out of the box
-- OpenAPI spec out of the box
+- OpenAPI spec out of the box **[added in release v0.0.1]**
 - Customizable http exposure conventions
 
 ## changelog
