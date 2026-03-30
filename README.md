@@ -54,6 +54,13 @@ public interface MyService {
 curl http://<app_host>:<app_port>/path/random -H "api:demo"
 ~~~
 
+## disclaimer
+
+This tool is part of my internal platform for accelerating the journey from idea to realization. 
+It's designed for building simple prototypes (note that advanced features like HTTP interceptors and rate limiting are not supported).
+
+I also use it as a personal knowledge hub, since it's a convenient way to store and revisit boilerplate I'd otherwise forget
+
 ## roadmap
 - OAuth 2.0 out of the box
 - OpenAPI spec out of the box
