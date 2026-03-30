@@ -39,8 +39,8 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/lukadjo/rawp.git</connection>
-        <developerConnection>scm:git:https://github.com/lukadj/rawp.git</developerConnection>
+        <connection>scm:git:https://github.com/lukadjo98/rawp.git</connection>
+        <developerConnection>scm:git:https://github.com/lukadjo98/rawp.git</developerConnection>
         <url>https://github.com/lukadjo/rawp</url>
         <tag>rawp-0.0.1</tag>
     </scm>
