@@ -46,7 +46,8 @@ public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
 
         rawpRequest.setMethodType(retrieveMethodType(httpRequest));
 
-        rawpRequest.setArgs(retrieveArgs(httpRequest));
+        if ("POST".equalsIgnoreCase(httpRequest.getHttpMethod()))
+            rawpRequest.setArgs(retrieveArgs(httpRequest));
 
         return HttpRawpRequestMappingResult.builder()
                 .rawpRequest(rawpRequest)
