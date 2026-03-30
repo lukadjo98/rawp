@@ -9,15 +9,6 @@ Developer declares service as a plain Java interface, and the library automatica
 
 ## usage
 
-- pom.xml: 
-~~~xml
-        <dependency>
-            <groupId>dev.lukadjo</groupId>
-            <artifactId>rawp-all</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-~~~
-
 - main:
 ~~~java
 @SpringBootApplication
