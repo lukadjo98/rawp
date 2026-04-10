@@ -4,7 +4,7 @@
 
     <groupId>dev.lukadjo</groupId>
     <artifactId>rawp</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>rawp-api</module>
@@ -17,8 +17,22 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.version>0.0.2</project.version>
     </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/lukadjo98/rawp.git</connection>
+        <developerConnection>scm:git:https://github.com/lukadjo98/rawp.git</developerConnection>
+        <url>https://github.com/lukadjo98/rawp</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
+        </repository>
+    </distributionManagement>
     <dependencyManagement>
 
         <dependencies>
@@ -153,6 +167,15 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <tagNameFormat>rawp-all-@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
         </plugins>
