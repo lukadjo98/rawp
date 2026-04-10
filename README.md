@@ -235,8 +235,7 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 
 ## changelog
 
-**[v1.0.0-release]**
-
-### added
+### **[v1.0.0-release]**
+#### added
 - protocol-agnostic java service http exposure
 - module for testing
