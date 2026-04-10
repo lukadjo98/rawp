@@ -9,7 +9,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.core.io.ClassPathResource;
 
+import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,14 +19,16 @@ import java.nio.charset.StandardCharsets;
 public class HttpRawpRequestMapperImplTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpRawpRequestMapper httpMapper = new HttpRawpRequestMapperImpl();
 
     @ParameterizedTest
     @CsvSource(value = {
-            "1_httpRequest.json,1_rawpRequest.json",
-            "2_httpRequest.json,2_rawpRequest.json"
+            "rest/1_httpRequest.json, rest/1_rawpRequest.json, rest/rawp-mapping-rest.groovy",
+            "soap/2_httpRequest.json, soap/2_rawpRequest.json, soap/rawp-mapping-soap.groovy"
     })
-    void testDummy(String httpRequestFilename, String expectedRawpResponseFilename) throws IOException, JSONException {
+    void testDummy(String httpRequestFilename, String expectedRawpResponseFilename, String mappingScriptName) throws IOException, JSONException, ScriptException {
+
+        HttpRawpRequestMapper httpMapper = new HttpRawpRequestMapperImpl(new ClassPathResource("http-rawp-examples/"+mappingScriptName));
+
 
         HttpRequest httpRequest = objectMapper.readValue(new File("./src/test/resources/http-rawp-examples/" + httpRequestFilename), HttpRequest.class);
         HttpRawpRequestMappingResult mappingResult = httpMapper.mapHttpRequestToRawpRequest(httpRequest);

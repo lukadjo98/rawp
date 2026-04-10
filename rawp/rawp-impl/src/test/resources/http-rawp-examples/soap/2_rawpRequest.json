@@ -1,0 +1,12 @@
+{
+  "status": "SUCCESS",
+  "statusMessage": null,
+  "rawpRequest": {
+    "api": "my-api",
+    "methodName": "myService",
+    "args": {
+      "id": "123"
+    },
+    "methodType": "POST"
+  }
+}

@@ -1,0 +1,24 @@
+import dev.lukadjo.rawp.api.RawpMethodType
+import dev.lukadjo.rawp.impl.model.RawpRequest
+
+// Default REST mapping:
+//   api        <- "api" header
+//   methodName <- path (leading slash stripped)
+//   methodType <- HTTP method
+//   args       <- JSON body (POST only), parsed via Jackson objectMapper binding
+
+def api = httpRequest.headers['api']?.get(0)
+def methodName = (httpRequest.path?.length() > 1) ? httpRequest.path.substring(1) : null
+def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
+def args = [:]
+
+if (methodType == RawpMethodType.POST && httpRequest.body) {
+    args = jsonMapper.readValue(httpRequest.body, Map.class)
+}
+
+def r = new RawpRequest()
+r.api = api
+r.methodName = methodName
+r.methodType = methodType
+r.args = args
+r

@@ -1,0 +1,8 @@
+{
+  "path": "/my-api",
+  "headers": {
+    "SOAPAction": [ "myService" ]
+  },
+  "httpMethod": "POST",
+  "body": "<Envelope><Body><id>123</id></Body></Envelope>"
+}

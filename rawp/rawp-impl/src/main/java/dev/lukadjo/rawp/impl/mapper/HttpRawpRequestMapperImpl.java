@@ -1,82 +1,71 @@
 package dev.lukadjo.rawp.impl.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.lukadjo.rawp.api.RawpMethodType;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import dev.lukadjo.rawp.impl.model.HttpRequest;
 import dev.lukadjo.rawp.impl.model.RawpRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Map;
+import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 @Component
 public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper jsonMapper = new ObjectMapper();
+    private static final XmlMapper xmlMapper = new XmlMapper();
+
+    private final ScriptEngine engine;
+    private final CompiledScript compiledScript;
+
+    public HttpRawpRequestMapperImpl(
+            @Value("${rawp.mapping.script.path:classpath:rawp-mapping.groovy}") Resource scriptResource)
+            throws IOException, ScriptException {
+        this.engine = new ScriptEngineManager().getEngineByName("groovy");
+        if (this.engine == null) {
+            throw new IllegalStateException("Groovy script engine not found on classpath");
+        }
+        try (Reader reader = new InputStreamReader(scriptResource.getInputStream())) {
+            this.compiledScript = ((Compilable) this.engine).compile(reader);
+        }
+    }
 
     @Override
     public HttpRawpRequestMappingResult mapHttpRequestToRawpRequest(HttpRequest httpRequest) {
+        Bindings bindings = engine.createBindings();
+        bindings.put("httpRequest", httpRequest);
+        bindings.put("jsonMapper", jsonMapper);
+        bindings.put("xmlMapper", xmlMapper);
 
-        RawpRequest rawpRequest = new RawpRequest();
-
-        String methodPath = httpRequest.getPath();
-        if (!StringUtils.hasText(methodPath) || methodPath.length() < 2) {
+        try {
+            Object result = compiledScript.eval(bindings);
+            if (result instanceof RawpRequest rawpRequest) {
+                return HttpRawpRequestMappingResult.builder()
+                        .rawpRequest(rawpRequest)
+                        .status(HttpRawpRequestMappingResultStatus.SUCCESS)
+                        .statusMessage(null)
+                        .build();
+            }
             return HttpRawpRequestMappingResult.builder()
                     .rawpRequest(null)
                     .status(HttpRawpRequestMappingResultStatus.INVALID_PATH)
-                    .statusMessage("Method path not found.")
+                    .statusMessage("Mapping script did not return a RawpRequest.")
                     .build();
-        } else {
-            rawpRequest.setMethodName(methodPath.substring(1));
-        }
-
-        List<String> apiHeaders = retrieveApiHeader(httpRequest);
-        if (apiHeaders == null || apiHeaders.isEmpty()) {
+        } catch (ScriptException e) {
             return HttpRawpRequestMappingResult.builder()
                     .rawpRequest(null)
-                    .status(HttpRawpRequestMappingResultStatus.INVALID_HEADERS)
-                    .statusMessage("Api header not found.")
+                    .status(HttpRawpRequestMappingResultStatus.INVALID_BODY)
+                    .statusMessage("Mapping script error: " + e.getMessage())
                     .build();
-        } else {
-            rawpRequest.setApi(apiHeaders.getFirst());
         }
-
-        rawpRequest.setMethodType(retrieveMethodType(httpRequest));
-
-        if ("POST".equalsIgnoreCase(httpRequest.getHttpMethod()))
-            rawpRequest.setArgs(retrieveArgs(httpRequest));
-
-        return HttpRawpRequestMappingResult.builder()
-                .rawpRequest(rawpRequest)
-                .status(HttpRawpRequestMappingResultStatus.SUCCESS)
-                .statusMessage(null)
-                .build();
-    }
-
-    private Map<String, Object> retrieveArgs(HttpRequest httpRequest) {
-
-        try {
-            return objectMapper.readValue(httpRequest.getBody(), new TypeReference<>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error while parsing body", e);
-        }
-
-    }
-
-    private static RawpMethodType retrieveMethodType(HttpRequest httpRequest) {
-        return switch (httpRequest.getHttpMethod()) {
-            case "GET", "get" -> RawpMethodType.GET;
-            case "POST", "post" -> RawpMethodType.POST;
-            default ->
-                    throw new IllegalArgumentException("Rawp method type not defined for http method: " + httpRequest.getHttpMethod());
-        };
-    }
-
-    private static List<String> retrieveApiHeader(HttpRequest httpRequest) {
-        return httpRequest.getHeaders().get("api");
     }
 }
