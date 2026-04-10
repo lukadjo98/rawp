@@ -102,7 +102,7 @@ Create a Groovy script that reads the incoming HTTP request and produces a `Rawp
 The script must return a `RawpRequest` instance.
 
 
-#### REST example (`src/main/resources/rawp-mapping.groovy`)
+#### REST example (`src/main/resources/rest-mapping.groovy`)
 
 Conventions: path is `/{api}/{methodName}`, body is JSON.
 
@@ -129,7 +129,7 @@ r
 ```
 A `POST /math-api/sum` with body `{"a": 1, "b": 5}` will invoke `MathService.sum(1, 5)`.
 
-#### SOAP example (`src/main/resources/rawp-mapping.groovy`)
+#### SOAP example (`src/main/resources/soap-mapping.groovy`)
 
 Conventions: path is `/{api}`, method name comes from the `soapaction` header, body is a SOAP XML envelope.
 
