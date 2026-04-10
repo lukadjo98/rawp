@@ -28,7 +28,7 @@ public class HttpRawpRequestMapperImpl implements HttpRawpRequestMapper {
     private final CompiledScript compiledScript;
 
     public HttpRawpRequestMapperImpl(
-            @Value("${rawp.mapping.script.path:classpath:rawp-mapping.groovy}") Resource scriptResource)
+            @Value("classpath:${rawp.mapping.script.path}") Resource scriptResource)
             throws IOException, ScriptException {
         this.engine = new ScriptEngineManager().getEngineByName("groovy");
         if (this.engine == null) {
