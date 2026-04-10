@@ -7,8 +7,9 @@ import dev.lukadjo.rawp.impl.model.RawpRequest
 //   methodType <- HTTP method
 //   args       <- JSON body (POST only), parsed via Jackson objectMapper binding
 
-def api = headers['api']?.get(0)
-def methodName = (path?.length() > 1) ? path.substring(1) : null
+def parts = httpRequest.path.replaceFirst("^/", "").split("/", 2)
+def api = parts[0]
+def methodName = parts[1]
 def methodType = 'POST'.equalsIgnoreCase(httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
 def args = [:]
 

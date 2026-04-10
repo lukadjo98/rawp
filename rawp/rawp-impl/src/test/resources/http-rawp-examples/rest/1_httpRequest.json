@@ -1,7 +1,6 @@
 {
-  "path": "/service-path",
+  "path": "/myApi/service-path",
   "headers": {
-    "api": [ "myApi" ],
     "headerKey": [ "headerValue" ]
   },
   "httpMethod": "POST",
