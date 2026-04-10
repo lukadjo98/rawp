@@ -18,16 +18,19 @@
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-api</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-impl</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-rest</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

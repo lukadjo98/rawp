@@ -7,14 +7,14 @@ import dev.lukadjo.rawp.impl.model.RawpRequest
 //   methodType <- HTTP method
 //   args       <- JSON body (POST only), parsed via Jackson objectMapper binding
 
-def parts = httpRequest.path.replaceFirst("^/", "").split("/", 2)
-def api = parts[0]
-def methodName = parts[1]
-def methodType = 'POST'.equalsIgnoreCase(httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
+def api = ( httpRequest.path?.length() > 1 ) ? httpRequest.path.substring(1) : null;
+def methodName = httpRequest.headers['soapaction']?.get(0);
+def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
 def args = [:]
 
-if (methodType == RawpMethodType.POST && body) {
-    args = objectMapper.readValue(body, Map.class)
+if (methodType == RawpMethodType.POST && httpRequest.body) {
+    def envelope = xmlMapper.readValue(httpRequest.body, Map.class)
+    args = envelope?.Body
 }
 
 def r = new RawpRequest()
