@@ -6,17 +6,25 @@ Developer declares service as a plain Java interface, and the library automatica
 
 - jdk 21
 
+## maven
+
+~~~xml
+	<dependency>
+    	<groupId>dev.lukadjo</groupId>
+        <artifactId>rawp-all</artifactId>
+        <version>0.0.1</version>
+	</dependency>
+
+...
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
+        </repository>
+    </repositories>
+~~~
 
 ## usage
-
-- pom.xml: 
-~~~xml
-        <dependency>
-            <groupId>dev.lukadjo</groupId>
-            <artifactId>rawp-all</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-~~~
 
 - main:
 ~~~java
@@ -39,16 +47,16 @@ public interface MyService {
 
     @RawpMethod(
             name = "path/random",
-            api = "demo",
+            api = "demo",						//<--HERE
             type = RawpMethodType.GET
-    ) //<--HERE
+    ) 
     int getRandomNumber();
 
 }
 
 ~~~
 
-### http exposure spec
+### http exposure example
 
 ~~~http
 curl http://<app_host>:<app_port>/path/random -H "api:demo"
@@ -63,8 +71,15 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 
 ## roadmap
 - OAuth 2.0 out of the box
-- OpenAPI spec out of the box
+- OpenAPI spec out of the box **[added in release v0.0.1]**
 - Customizable http exposure conventions
 
 ## changelog
 
+### [release v0.0.1]
+
+#### added 
+-	OpenAPI spec exposure out of the box
+~~~bash
+wget http://<app_host>:<app_port>/swagger/my-api.yaml
+~~~
