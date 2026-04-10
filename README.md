@@ -72,9 +72,15 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 ## roadmap
 - OAuth 2.0 out of the box
 - OpenAPI spec out of the box **[added in release v0.0.1]**
-- Customizable http exposure conventions
+- Customizable http exposure conventions **[added in release v0.0.2]**
 
 ## changelog
+### [release v0.0.2]
+
+#### added
+- Customizable http exposure conventions
+	-	editing rawp-mapping.groovy  (rawp-impl module) affects the way http request is mapped to rawp request
+
 
 ### [release v0.0.1]
 
