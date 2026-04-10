@@ -11,6 +11,7 @@
         <module>rawp-rest</module>
         <module>rawp-impl</module>
         <module>rawp-all</module>
+        <module>rawp-test</module>
     </modules>
 
     <properties>
