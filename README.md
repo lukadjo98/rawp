@@ -56,10 +56,76 @@ public interface MyService {
 
 ~~~
 
-### http exposure example
+## http exposure script
 
-~~~http
-curl http://<app_host>:<app_port>/path/random -H "api:demo"
+Rawp supports customizable transformation of HTTP requests into RAWP requests using Groovy scripting.
+
+### REST
+
+#### groovy mapping script
+~~~groovy
+import dev.lukadjo.rawp.api.RawpMethodType
+import dev.lukadjo.rawp.impl.model.RawpRequest
+
+def api = ( httpRequest.path?.length() > 1 ) ? httpRequest.path.substring(1) : null;
+def methodName = httpRequest.headers['soapaction']?.get(0);
+def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
+def args = [:]
+
+if (methodType == RawpMethodType.POST && httpRequest.body) {
+    def envelope = xmlMapper.readValue(httpRequest.body, Map.class)
+    args = envelope?.Body
+}
+
+def r = new RawpRequest()
+r.api = api
+r.methodName = methodName
+r.methodType = methodType
+r.args = args
+r
+~~~
+
+#### http exposure
+
+~~~bash
+curl -X POST http://<app_host>:<app_port>/<api-name>/<method-name> -d '{ "mydata": "lukadjo-legend" }'
+~~~
+
+
+### SOAP
+
+#### groovy mapping script
+~~~groovy
+import dev.lukadjo.rawp.api.RawpMethodType
+import dev.lukadjo.rawp.impl.model.RawpRequest
+
+// Default REST mapping:
+//   api        <- "api" header
+//   methodName <- path (leading slash stripped)
+//   methodType <- HTTP method
+//   args       <- JSON body (POST only), parsed via Jackson objectMapper binding
+
+def api = ( httpRequest.path?.length() > 1 ) ? httpRequest.path.substring(1) : null;
+def methodName = httpRequest.headers['SOAPAction']?.get(0);
+def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
+def args = [:]
+
+if (methodType == RawpMethodType.POST && httpRequest.body) {
+    def envelope = xmlMapper.readValue(httpRequest.body, Map.class)
+    args = envelope?.Body
+}
+
+def r = new RawpRequest()
+r.api = api
+r.methodName = methodName
+r.methodType = methodType
+r.args = args
+r
+~~~
+
+#### http exposure
+~~~bash
+curl -X POST http://<app_host>:<app_port>/<api-name> -H "soapaction: <method-name>" -d '<Envelope><Body><mydata>lukadjo-legend</mydata></Body></Envelope>'
 ~~~
 
 ## disclaimer
