@@ -11,26 +11,24 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <rawp.version>0.0.2</rawp.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-api</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
+            <version>${rawp.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-impl</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
+            <version>${rawp.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.lukadjo</groupId>
             <artifactId>rawp-rest</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
+            <version>${rawp.version}</version>
         </dependency>
     </dependencies>
 
@@ -46,7 +44,7 @@
         <connection>scm:git:https://github.com/lukadjo98/rawp.git</connection>
         <developerConnection>scm:git:https://github.com/lukadjo98/rawp.git</developerConnection>
         <url>https://github.com/lukadjo/rawp</url>
-        <tag>rawp-0.0.1</tag>
+        <tag>rawp-${project.version}</tag>
     </scm>
 
     <build>
