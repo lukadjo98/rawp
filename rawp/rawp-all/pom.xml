@@ -4,7 +4,7 @@
 
     <groupId>dev.lukadjo</groupId>
     <artifactId>rawp-all</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -43,7 +43,7 @@
         <connection>scm:git:https://github.com/lukadjo98/rawp.git</connection>
         <developerConnection>scm:git:https://github.com/lukadjo98/rawp.git</developerConnection>
         <url>https://github.com/lukadjo/rawp</url>
-        <tag>rawp-all-0.0.2</tag>
+        <tag>rawp-${project.version}</tag>
     </scm>
 
     <build>
