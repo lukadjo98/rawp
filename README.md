@@ -38,7 +38,7 @@ Then add a single dependency:
 <dependency>
     <groupId>dev.lukadjo</groupId>
     <artifactId>rawp-all</artifactId>
-    <version>0.0.4</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -174,7 +174,7 @@ Add `rawp-test` as a test-scoped dependency:
 <dependency>
     <groupId>dev.lukadjo</groupId>
     <artifactId>rawp-test</artifactId>
-    <version>0.0.4</version>
+    <version>1.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -234,3 +234,9 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 - OAuth 2.0 out of the box
 
 ## changelog
+
+**v[1.0.0]-release**
+
+#added
+- protocol-agnostic java service http exposure
+- module for testing
