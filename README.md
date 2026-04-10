@@ -163,7 +163,7 @@ A `POST /math-api` with header `soapaction: sum` and body `<Envelope><Body><a>1<
 Set the `rawp.mapping.script.path` property in your `application.properties` (or `application.yml`).
 
 ```properties
-rawp.mapping.script.path=rawp-mapping.groovy
+rawp.mapping.script.path=rest-mapping.groovy
 ```
 
 ## Testing
