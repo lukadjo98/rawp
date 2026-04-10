@@ -1,74 +1,144 @@
 # rawp
-Java annotation driven library that eliminates HTTP exposure bolerplate. 
+Lightweight Java library that exposes annotate service methods as HTTP endpoints (that way removing all of the HTTP exposure boilerplate).
+
+The mapping between incoming HTTP requests and your methods is defined by a Groovy script you provide, making rawp protocol-agnostic. 
+
+The same service can be exposed over REST, SOAP, or any custom convention without touching the service code.
 Developer declares service as a plain Java interface, and the library automatically binds it to HTTP endpoint at runtime.
+
+## How it works
+1. You annotate your service interface with *@RawpComponent* and mark the methods you want to expose with *@RawpMethod*.
+2. You write a Groovy script that translates an incoming http-request into a *RawpRequest*. rawp executes this script for every request.
+3. rawp matches the resolved *RawpRequest* to the annotated method and invokes it via reflection, returning the result as the HTTP response.
+
+The groovy script is the only place where protocol conventions live. Switching from REST to SOAP is a matter of swapping the script.
+
 
 ## requirements
 
-- jdk 21
+- Java 21
+- Spring Boot (or a Spring application context)
 
 ## maven
 
-~~~xml
-	<dependency>
-    	<groupId>dev.lukadjo</groupId>
-        <artifactId>rawp-all</artifactId>
-        <version>0.0.1</version>
-	</dependency>
+Add the GitHub Packages repository to your `pom.xml`:
 
-...
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
-        </repository>
-    </repositories>
-~~~
+```xml
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
+    </repository>
+</repositories>
+```
 
-## usage
+Then add a single dependency:
 
-- main:
-~~~java
-@SpringBootApplication
-@Import({RawpConfig.class}) //<--HERE
-public class DemoApplication {
+```xml
+<dependency>
+    <groupId>dev.lukadjo</groupId>
+    <artifactId>rawp-all</artifactId>
+    <version>0.0.4</version>
+</dependency>
+```
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+> GitHub Packages requires authentication even for public packages. Add your credentials to `~/.m2/settings.xml`:
+> ```xml
+> <servers>
+>     <server>
+>         <id>github</id>
+>         <username>YOUR_GITHUB_USERNAME</username>
+>         <password>YOUR_GITHUB_TOKEN</password>
+>     </server>
+> </servers>
+> ```
+> The token needs the `read:packages` scope.
 
+
+## Getting started
+
+### 1. Annotate your service
+
+Place `@RawpComponent` on the interface and `@RawpMethod` on each method you want to expose:
+
+```java
+import dev.lukadjo.rawp.api.RawpComponent;
+import dev.lukadjo.rawp.api.RawpMethod;
+import dev.lukadjo.rawp.api.RawpMethodType;
+
+@RawpComponent
+public interface MathService {
+
+    @RawpMethod(name = "sum", api = "math-api", type = RawpMethodType.POST)
+    Integer sum(int a, int b);
 }
-~~~
+```
 
-- service:
-~~~java
+The implementation must be a Spring-managed bean:
 
-@RawpComponent //<--HERE
-public interface MyService {
+```java
+import org.springframework.stereotype.Component;
 
-    @RawpMethod(
-            name = "path/random",
-            api = "demo",						//<--HERE
-            type = RawpMethodType.GET
-    ) 
-    int getRandomNumber();
+@Component
+public class MathServiceImpl implements MathService {
 
+    @Override
+    public Integer sum(int a, int b) {
+        return a + b;
+    }
 }
+```
 
-~~~
+### 2. Write a mapping script
 
-## http exposure script
+Create a Groovy script that reads the incoming HTTP request and produces a `RawpRequest`. The script has three bindings available:
 
-Rawp supports customizable transformation of HTTP requests into RAWP requests using Groovy scripting.
+| Binding | Type | Description |
+|---|---|---|
+| `httpRequest` | `HttpRequest` | The incoming request (path, httpMethod, headers, body) |
+| `jsonMapper` | `ObjectMapper` | Jackson JSON mapper |
+| `xmlMapper` | `XmlMapper` | Jackson XML mapper |
 
-### REST
+The script must return a `RawpRequest` instance.
 
-#### groovy mapping script
-~~~groovy
+
+#### REST example (`src/main/resources/rawp-mapping.groovy`)
+
+Conventions: path is `/{api}/{methodName}`, body is JSON.
+
+```groovy
 import dev.lukadjo.rawp.api.RawpMethodType
 import dev.lukadjo.rawp.impl.model.RawpRequest
 
-def api = ( httpRequest.path?.length() > 1 ) ? httpRequest.path.substring(1) : null;
-def methodName = httpRequest.headers['soapaction']?.get(0);
+def parts = httpRequest.path.replaceFirst("^/", "").split("/", 2)
+def api = parts[0]
+def methodName = parts[1]
+def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
+def args = [:]
+
+if (methodType == RawpMethodType.POST && httpRequest.body) {
+    args = jsonMapper.readValue(httpRequest.body, Map.class)
+}
+
+def r = new RawpRequest()
+r.api = api
+r.methodName = methodName
+r.methodType = methodType
+r.args = args
+r
+```
+A `POST /math-api/sum` with body `{"a": 1, "b": 5}` will invoke `MathService.sum(1, 5)`.
+
+#### SOAP example (`src/main/resources/rawp-mapping.groovy`)
+
+Conventions: path is `/{api}`, method name comes from the `soapaction` header, body is a SOAP XML envelope.
+
+```groovy
+import dev.lukadjo.rawp.api.RawpMethodType
+import dev.lukadjo.rawp.impl.model.RawpRequest
+
+def api = (httpRequest.path?.length() > 1) ? httpRequest.path.substring(1) : null
+def methodName = httpRequest.headers['soapaction']?.get(0)
 def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
 def args = [:]
 
@@ -83,50 +153,75 @@ r.methodName = methodName
 r.methodType = methodType
 r.args = args
 r
-~~~
+```
 
-#### http exposure
-
-~~~bash
-curl -X POST http://<app_host>:<app_port>/<api-name>/<method-name> -d '{ "mydata": "lukadjo-legend" }'
-~~~
+A `POST /math-api` with header `soapaction: sum` and body `<Envelope><Body><a>1</a><b>5</b></Body></Envelope>` will invoke `MathService.sum(1, 5)`.
 
 
-### SOAP
+### 3. Configure the script path
 
-#### groovy mapping script
-~~~groovy
-import dev.lukadjo.rawp.api.RawpMethodType
-import dev.lukadjo.rawp.impl.model.RawpRequest
+Set the `rawp.mapping.script.path` property in your `application.properties` (or `application.yml`).
 
-// Default REST mapping:
-//   api        <- "api" header
-//   methodName <- path (leading slash stripped)
-//   methodType <- HTTP method
-//   args       <- JSON body (POST only), parsed via Jackson objectMapper binding
+```properties
+rawp.mapping.script.path=rawp-mapping.groovy
+```
 
-def api = ( httpRequest.path?.length() > 1 ) ? httpRequest.path.substring(1) : null;
-def methodName = httpRequest.headers['SOAPAction']?.get(0);
-def methodType = 'POST'.equalsIgnoreCase(httpRequest.httpMethod) ? RawpMethodType.POST : RawpMethodType.GET
-def args = [:]
+## Testing
 
-if (methodType == RawpMethodType.POST && httpRequest.body) {
-    def envelope = xmlMapper.readValue(httpRequest.body, Map.class)
-    args = envelope?.Body
+Add `rawp-test` as a test-scoped dependency:
+
+```xml
+<dependency>
+    <groupId>dev.lukadjo</groupId>
+    <artifactId>rawp-test</artifactId>
+    <version>0.0.4</version>
+    <scope>test</scope>
+</dependency>
+```
+
+`RawpTestContext` lets you test the full pipeline — script execution, endpoint matching, and method invocation — without starting an HTTP server.
+
+```java
+import dev.lukadjo.rawp.test.RawpTestContext;
+import org.junit.jupiter.api.Test;
+
+class MathServiceTest {
+
+    @Test
+    void sum_rest() {
+        RawpTestContext ctx = RawpTestContext.builder()
+                .groovyScript("classpath:rawp-mapping.groovy")
+                .component(new MathServiceImpl())
+                .build();
+
+        ctx.request()
+                .method("POST")
+                .path("/math-api/sum")
+                .body("{\"a\": 1, \"b\": 5}")
+                .execute()
+                .assertOk()
+                .assertResponseBody(6);
+    }
+
+    @Test
+    void sum_soap() {
+        RawpTestContext ctx = RawpTestContext.builder()
+                .groovyScript("classpath:rawp-mapping-soap.groovy")
+                .component(new MathServiceImpl())
+                .build();
+
+        ctx.request()
+                .method("POST")
+                .path("/math-api")
+                .header("soapaction", "sum")
+                .body("<Envelope><Body><a>1</a><b>5</b></Body></Envelope>")
+                .execute()
+                .assertOk()
+                .assertResponseBody(6);
+    }
 }
-
-def r = new RawpRequest()
-r.api = api
-r.methodName = methodName
-r.methodType = methodType
-r.args = args
-r
-~~~
-
-#### http exposure
-~~~bash
-curl -X POST http://<app_host>:<app_port>/<api-name> -H "soapaction: <method-name>" -d '<Envelope><Body><mydata>lukadjo-legend</mydata></Body></Envelope>'
-~~~
+```
+component() accepts multiple instances. All @RawpComponent beans among them are discovered automatically by the registry.
 
 ## disclaimer
 
@@ -137,21 +232,5 @@ I also use it as a personal knowledge hub, since it's a convenient way to store 
 
 ## roadmap
 - OAuth 2.0 out of the box
-- OpenAPI spec out of the box **[added in release v0.0.1]**
-- Customizable http exposure conventions **[added in release v0.0.2]**
 
 ## changelog
-### [release v0.0.2]
-
-#### added
-- Customizable http exposure conventions
-	-	editing rawp-mapping.groovy  (rawp-impl module) affects the way http request is mapped to rawp request
-
-
-### [release v0.0.1]
-
-#### added 
--	OpenAPI spec exposure out of the box
-~~~bash
-wget http://<app_host>:<app_port>/swagger/my-api.yaml
-~~~
