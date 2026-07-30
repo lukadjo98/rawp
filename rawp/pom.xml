@@ -28,11 +28,11 @@
     </scm>
 
     <distributionManagement>
-        <repository>
+<!--         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
-        </repository>
+        </repository> -->
         <repository>
             <id>rawp-releases</id>
             <name>lukadjo98 repository</name>
