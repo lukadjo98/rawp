@@ -36,12 +36,12 @@
         <repository>
             <id>rawp-releases</id>
             <name>lukadjo98 repository</name>
-            <url>http://192.168.1.60:8444/lukadjo98-releases</url>
+            <url>http://192.168.1.60:8444/maven-releases</url>
         </repository>
         <snapshotRepository>
             <id>rawp-snapshots</id>
             <name>lukadjo98 repository</name>
-            <url>http://192.168.1.60:8444/lukadjo98-snapshots</url>
+            <url>http://192.168.1.60:8444/maven-snapshots</url>
         </snapshotRepository>
 
     </distributionManagement>
