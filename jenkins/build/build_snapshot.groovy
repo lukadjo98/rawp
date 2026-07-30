@@ -18,12 +18,12 @@ pipeline {
 			steps {
 				dir('rawp'){
                     withCredentials([usernamePassword(
-                        credentialsId: 'lukadjo98-git',
-                        usernameVariable: 'GITHUB_USERNAME',
-                        passwordVariable: 'GITHUB_TOKEN'
+                        credentialsId: 'lukadjo98-nexus',
+                        usernameVariable: 'REPO_USERNAME',
+                        passwordVariable: 'REPO_PASSWORD'
                     )]) {
                         configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                            sh 'mvn -s $MAVEN_SETTINGS clean install -DskipTests'
+                            sh 'mvn -s $MAVEN_SETTINGS deploy'
                         }
                     }
 				}
