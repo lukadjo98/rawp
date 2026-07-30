@@ -33,6 +33,17 @@
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/lukadjo98/rawp</url>
         </repository>
+        <repository>
+            <id>rawp-releases</id>
+            <name>lukadjo98 repository</name>
+            <url>http://192.168.1.60:8444/lukadjo98-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>rawp-snapshots</id>
+            <name>lukadjo98 repository</name>
+            <url>http://192.168.1.60:8444/lukadjo98-snapshots</url>
+        </snapshotRepository>
+
     </distributionManagement>
     <dependencyManagement>
 
